@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AI Podcast Summarizer
 
-## Getting Started
+## Install the Necessary Packages
 
-First, run the development server:
+The below command installs the necessary Python gRPC packages.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pip3 install grpcio grpcio-tools
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The below command installs the necessary Go gRPC packages.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Add the installed Go protoc-gen-go package to PATH
 
-## Learn More
+```bash
+export PATH="$PATH:$(go env GOPATH)/bin"
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Generate the gRPC Files
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Run the below command from the /backend folder to generate the Python gRPC files.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+python3 -m grpc_tools.protoc -I./proto --python_out=./services/proto --grpc_python_out=./services/proto ./proto/service.proto
+```
 
-## Deploy on Vercel
+Run the below command from the /backend folder to generate the Go gRPC files.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+protoc --proto_path=./proto --go_out=./api/proto --go_opt=paths=source_relative --go-grpc_out=./api/proto --go-grpc_opt=paths=source_relative ./proto/service.proto
+```
