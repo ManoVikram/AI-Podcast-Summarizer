@@ -31,3 +31,25 @@ def summarize_text(transcript):
     summary_paragraph = " ".join(paragraph_lines).strip()
 
     return bullet_points, summary_paragraph
+
+def generate_blog_post(transcript):
+    # Step 1 - Construct the prompt for blog post generation
+    prompt = f"""
+        Write a blog post (5 paragraphs) based on the podcast transcript below.
+        Make it engaging, structured, and easy to read.
+
+        Transcript:
+        {transcript}
+        """
+    
+    # Step 2 - Call the Ollama API to get the blog post
+    response = ollama.chat(
+        model="llama2",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant that writes detailed blog posts based on transcripts."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    blog_post = response["message"]["content"].strip()
+
+    return blog_post
